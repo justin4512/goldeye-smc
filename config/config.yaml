@@ -1,0 +1,77 @@
+# XAUUSD SMC 系統配置
+
+# Telegram 通知
+telegram:
+  bot_token: "${TELEGRAM_BOT_TOKEN}"  # 從環境變量讀取
+  chat_id: "${TELEGRAM_CHAT_ID}"      # 從環境變量讀取
+  enabled: true
+
+# 數據源配置
+data:
+  primary_source: "yfinance"
+  update_interval_seconds: 60  # 1 分鐘更新
+  timeframes:
+    - "1mo"
+    - "1wk"
+    - "1d"
+    - "4h"
+    - "1h"
+    - "15m"
+    - "5m"
+  
+# 交易標的
+symbols:
+  primary: "XAUUSD=X"
+  related:
+    - "GC=F"      # 黃金期貨
+    - "GLD"       # 黃金 ETF
+    - "^DXY"      # 美元指數
+    - "US10Y"     # 10 年美債
+    - "VIX"       # 恐慌指數
+
+# SMC 參數
+smc:
+  order_block:
+    min_body_atr_multiplier: 1.5  # 最小 K 線實體倍率
+    max_test_count: 3              # 最大測試次數
+  
+  fvg:
+    min_gap_atr_multiplier: 0.3   # 最小空白區倍率
+  
+  liquidity:
+    zigzag_percent: 5.0           # ZigZag 百分比
+    equal_highs_tolerance: 0.003  # Equal Highs 容差 (0.3%)
+  
+  structure:
+    bos_confirmation_bars: 1      # BOS 確認 K 線數
+  
+  signal:
+    min_confidence: 70            # 最低信心度
+    min_rr_ratio: 1.5             # 最低風險報酬比
+
+# 風險管理
+risk:
+  capital: 100000                 # 總資本 (USD)
+  risk_per_trade: 0.01            # 單筆風險 (1%)
+  max_total_exposure: 0.05        # 總風險敞口 (5%)
+  max_drawdown: 0.15              # 最大回撤 (15%)
+  
+  position_sizing:
+    method: "fixed_fractional"    # fixed_fractional / kelly / volatility_adjusted
+    volatility_lookback: 14       # ATR 週期
+  
+# 回測配置
+backtest:
+  start_date: "2020-01-01"
+  end_date: "2026-03-10"
+  initial_capital: 100000
+  commission_rate: 0.0001         # 佣金率 (0.01%)
+  slippage_model: "fixed"         # fixed / percentage / volume_based
+  fixed_slippage: 2.0             # 固定滑點 (美元)
+
+# 日誌配置
+logging:
+  level: "INFO"
+  file: "logs/xauusd_smc.log"
+  rotation: "100 MB"
+  retention: "30 days"

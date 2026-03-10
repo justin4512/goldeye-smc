@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  goldeye:
+    build: .
+    container_name: goldeye-smc
+    restart: unless-stopped
+    environment:
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+      - TELEGRAM_CHAT_ID=${TELEGRAM_CHAT_ID}
+      - GOLDENEYE_CAPITAL=${GOLDENEYE_CAPITAL:-100000}
+      - GOLDENEYE_RISK_PER_TRADE=${GOLDENEYE_RISK_PER_TRADE:-0.01}
+    volumes:
+      - ./logs:/app/logs
+      - ./config:/app/config:ro
+    networks:
+      - goldeye-network
+    healthcheck:
+      test: ["CMD", "python", "-c", "import src.data.fetcher; print('OK')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+networks:
+  goldeye-network:
+    driver: bridge
